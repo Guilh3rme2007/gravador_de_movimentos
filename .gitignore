@@ -1,0 +1,33 @@
+# =========================
+# BANCO DE DADOS
+# =========================
+mydatabase.db
+
+# =========================
+# DIRETÓRIO DE SPRINTS E GRAVAÇÕES
+# =========================
+# Ignora a pasta principal criada pelo script e todo o seu conteúdo (vídeos, CSVs, subpastas)
+records/
+
+# (Opcional) Se os arquivos temporários de teste descritos no código ainda existirem soltos:
+*_video.mp4
+*_dados.csv
+
+# =========================
+# AMBIENTE VIRTUAL
+# =========================
+venv/
+
+# =========================
+# CACHE E TEMPORÁRIOS DO PYTHON
+# =========================
+__pycache__/
+*.pyc
+
+# =========================
+# ARQUIVOS DO SISTEMA MACOS
+# =========================
+.DS_Store
+
+guia.txt
+mocap.py
