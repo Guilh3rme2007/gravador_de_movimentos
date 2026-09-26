@@ -2,58 +2,41 @@ import csv
 import cv2
 import time
 import mediapipe as mp
- 
-def startRecording(camera, path_video, path_csv):
-    sucess_test, test_frame = camera.read()
-    if not sucess_test:
-        raise RuntimeError("Não foi possível acessar a câmera do notebook")
-    height, width, _ = test_frame.shape
+from pathlib import Path
+
+def processVideo(input_path, path_video, path_csv):
+    camera = cv2.VideoCapture(input_path)
+
+    if not camera.isOpened():
+        print(f"Erro: Não foi possível abrir o vídeo em {input_path}")
+        return
+
+    width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = camera.get(cv2.CAP_PROP_FPS)
+
+    if fps == 0 or fps != fps:  
+        fps = 30.0
 
     fourcc = cv2.VideoWriter_fourcc(*'avc1')
-    video_recorder = cv2.VideoWriter(path_video, fourcc, 30.0, (width, height))
+    video_recorder = cv2.VideoWriter(path_video, fourcc, fps, (width, height))
 
     csv_file = open(path_csv, mode='w', newline='')
     csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['Frame',
-                         'Timestamp', 
-                         'Ombro_D_X', 
-                         'Ombro_D_Y', 
-                         'Ombro_D_Z', 
-                         'Ombro_E_X', 
-                         'Ombro_E_Y', 
-                         'Ombro_E_Z', 
-                         'Cotovelo_D_X', 
-                         'COTOVELO_D_Y', 
-                         'Cotovelo_D_Z',
-                         'Cotovelo_E_X',
-                         'Cotovelo_E_Y',
-                         'Cotovelo_E_Z',
-                         'PULSO_D_X',
-                         'PULSO_D_Y',
-                         'PULSO_D_Z',
-                         'PULSO_E_X',
-                         'PULSO_E_Y',
-                         'PULSO_E_Z',
-                         'JOELHO_D_X',
-                         'JOELHO_D_Y',
-                         'JOELHO_D_Z',
-                         'JOELHO_E_X',
-                         'JOELHO_E_Y',
-                         'JOELHO_E_Z'])
+    csv_writer.writerow(['Frame', 'Timestamp', 'Ombro_D_X', 'Ombro_D_Y', 'Ombro_D_Z', 'Ombro_E_X', 'Ombro_E_Y', 'Ombro_E_Z', 'Cotovelo_D_X', 'COTOVELO_D_Y', 'Cotovelo_D_Z', 'Cotovelo_E_X', 'Cotovelo_E_Y', 'Cotovelo_E_Z', 'PULSO_D_X', 'PULSO_D_Y', 'PULSO_D_Z', 'PULSO_E_X', 'PULSO_E_Y', 'PULSO_E_Z', 'JOELHO_D_X', 'JOELHO_D_Y', 'JOELHO_D_Z', 'JOELHO_E_X', 'JOELHO_E_Y', 'JOELHO_E_Z'])
 
     mp_pose = mp.solutions.pose
     mp_drawing = mp.solutions.drawing_utils
     pose = mp_pose.Pose(min_detection_confidence =0.5, min_tracking_confidence=0.5)
 
-    if not video_recorder.isOpened():
-        raise RuntimeError(f"Não foi possível criar o vídeo em: {path_video}")
-
-    print("Gravando... Aperte 'q' para sair.")
+    print("Processando vídeo... Pressione 'q' para cancelar a qualquer momento.")
 
     frame_count = 0
     while True:
         success, frame = camera.read()
+
         if not success:
+            print(f"Processamento concluído com sucesso! {frame_count} frames analisados.")
             break
 
         frame_count += 1
@@ -62,10 +45,11 @@ def startRecording(camera, path_video, path_csv):
         image_rgd = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = pose.process(image_rgd)
 
+        
         if result.pose_landmarks:
             mp_drawing.draw_landmarks(frame, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
-
             point = result.pose_landmarks.landmark
+           
             ombro_d = point[mp_pose.PoseLandmark.RIGHT_SHOULDER]
             ombro_e = point[mp_pose.PoseLandmark.LEFT_SHOULDER]
             cotovelo_d = point[mp_pose.PoseLandmark.RIGHT_ELBOW]
@@ -104,13 +88,15 @@ def startRecording(camera, path_video, path_csv):
                 joelho_e.z
             ])
 
-        video_recorder.write(frame)
-        cv2.imshow("Captura de Movimento", frame)
+            video_recorder.write(frame)
+            cv2.imshow("Processamento de Importação", frame)
 
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("Processamento cancelado pelo usuário.")
+                break   
 
     camera.release()
     video_recorder.release()
     csv_file.close()
     cv2.destroyAllWindows()
+    

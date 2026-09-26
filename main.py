@@ -2,6 +2,8 @@ from server import data
 import cv2
 from recordingLogic import cameraManager 
 from recordingLogic import recordingSprites as sprites
+from recordingLogic import  videoImport as vi
+from pathlib import Path
 
 data.createDB()
 
@@ -44,7 +46,8 @@ def newSprintOptions():
         print("\nQual câmera deseja usar? ")
         print("1 - Notebook")
         print("2 - Celular")
-        print("3 - Voltar")
+        print('3 - WebCam')
+        print("4 - Voltar")
 
         try:
             op_cam = int(input("Escolha uma opção:  "))
@@ -61,10 +64,13 @@ def newSprintOptions():
             
 
         elif op_cam == 3:
+            active_camera = cameraManager.externalWebcamConnect()
+            
+        elif op_cam == 4:
             break
 
         else:
-            print('Valor inválido, por favor tente novamente com um valor entre 1 e 3')
+            print('Valor inválido, por favor tente novamente com um valor entre 1 e 4')
             continue
 
         if active_camera is None:
@@ -131,6 +137,17 @@ while True:
 
     elif choice == 4:
         #chamar funcao de importar video da memoria do pc ou do celular
+        print("\n--- Importar Vídeo ---")
+        input_path = input("Digite o caminho completo do vídeo (Exemplo mac:/users/meunome/Downloads/meu_video.mp4): ")
+        
+        if not Path(input_path).is_file():
+            print("Erro: O arquivo não foi encontrado. Verifique o caminho e tente novamente.")
+            continue
+            
+        print("\nConfigurando pasta para salvar os dados extraídos...")
+        video_path, csv_path = data.newSprint(None) 
+
+        vi.processVideo(input_path, video_path, csv_path)
         continue
 
     elif choice == 5:

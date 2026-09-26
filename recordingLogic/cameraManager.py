@@ -38,11 +38,11 @@ def notebookConnect():
     return camera
 
 def cellphoneConnect(ip_url = None):
-    if ip_url:
+    if isinstance(ip_url, str):
         camera = IPCameraHTTP(ip_url)
         source = ip_url
     else:
-        source = 1
+        source = ip_url if ip_url is not None else 1
         camera = cv2.VideoCapture(source)
 
     if not camera.isOpened():
@@ -50,3 +50,9 @@ def cellphoneConnect(ip_url = None):
         return None
     return camera
 
+def externalWebcamConnect(index = 1):
+    camera = cv2.VideoCapture(index)
+    if not camera.isOpened():
+        print(f'Erro: Não foi possível acessar a webcam no índice {index}')
+        return None
+    return camera
