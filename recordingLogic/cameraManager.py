@@ -1,6 +1,7 @@
 import cv2
 import urllib.request
 import numpy 
+import platform
 
 class IPCameraHTTP:
     def __init__(self, url):
@@ -28,8 +29,17 @@ class IPCameraHTTP:
     def release(self):
         self.opened = False
 
+def getOSBackend():
+    os_name = platform.system()
+    if os_name == 'Windows':
+        return cv2.CAP_DSHOW
+    elif os_name == 'Darwin':
+        return cv2.CAP_AVFOUNDATION
+    return cv2.CAP_ANY
+
 def notebookConnect():
-    camera = cv2.VideoCapture(0)
+    backend = getOSBackend()
+    camera = cv2.VideoCapture(0, backend)
 
     if not camera.isOpened():
         print('Não foi possível conectar com a camera do notebook')
@@ -43,7 +53,8 @@ def cellphoneConnect(ip_url = None):
         source = ip_url
     else:
         source = ip_url if ip_url is not None else 1
-        camera = cv2.VideoCapture(source)
+        backend = getOSBackend()
+        camera = cv2.VideoCapture(source, backend)
 
     if not camera.isOpened():
         print(f"Erro: Não foi possível acessar o celular na fonte: {source}")
@@ -51,7 +62,8 @@ def cellphoneConnect(ip_url = None):
     return camera
 
 def externalWebcamConnect(index = 1):
-    camera = cv2.VideoCapture(index)
+    backend = getOSBackend()
+    camera = cv2.VideoCapture(index, backend)
     if not camera.isOpened():
         print(f'Erro: Não foi possível acessar a webcam no índice {index}')
         return None

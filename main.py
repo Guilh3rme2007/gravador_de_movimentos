@@ -1,4 +1,5 @@
 from server import data
+import os
 import cv2
 from recordingLogic import cameraManager 
 from recordingLogic import recordingSprites as sprites
@@ -6,6 +7,9 @@ from recordingLogic import  videoImport as vi
 from pathlib import Path
 
 data.createDB()
+
+def cleanScreen():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 def cellPhoneConnectionOptions():
     while True:
@@ -107,6 +111,7 @@ def dataOptions():
 
 
 while True:
+    cleanScreen()
     print('\n--- MENU ---')
     print('1 - Gravar nova Sprint')
     print('2 - Buscar registros no Banco de Dados')
