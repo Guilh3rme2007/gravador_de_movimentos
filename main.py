@@ -5,6 +5,7 @@ from recordingLogic import cameraManager
 from recordingLogic import recordingSprites as sprites
 from recordingLogic import  videoImport as vi
 from pathlib import Path
+from scripts import generateActivation as geAct
 
 data.createDB()
 
@@ -109,6 +110,41 @@ def dataOptions():
             print('Valor inválido, por favor tente novamente com um valor entre 1 e 3')
             continue
 
+def exportScriptsOptions():
+    while True:
+        print('\n -- Gerar Scripts de Integração --')
+        print('1 - Godot (C#)')
+        print('2 - Unity (C#)')
+        print('3 - Unreal Engine (C++)')
+        print('4 - Voltar')
+
+        try:
+            options = int(input('Escolha uma opcao: '))
+        except ValueError:
+            print('Por favor, digite um número.')
+            continue
+
+        if options == 1:
+            geAct.generateTarget("godot")
+            input("\nPressione Enter para continuar ")
+            break
+        
+        elif options == 2:
+            geAct.generateTarget("unity")
+            input("\nPressione Enter para continuar ")
+            break
+
+        elif options == 3:
+            geAct.generateTarget("unreal")
+            input("\nPressione Enter para continuar ")
+            break
+
+        elif options == 4:
+            break
+
+        else:
+            print('Valor inválido, por favor tente novamente com um valor entre 1 e 4')
+            continue
 
 while True:
     cleanScreen()
@@ -117,7 +153,8 @@ while True:
     print('2 - Buscar registros no Banco de Dados')
     print('3 - Conectar Celular')
     print('4 - Importar Vídeo')
-    print('5 - Sair')
+    print('5 - Gerar Scripts de Integração')
+    print('6 - Sair')
     
     try:
         choice = int(input('Escolha uma opcao: '))
@@ -126,22 +163,18 @@ while True:
         continue
 
     if choice == 1:
-        # chamar funcao de nova Sprint
         newSprintOptions()
         continue
 
     elif choice == 2:
-        # chamar funcao de buscar registros no banco
         dataOptions()
         continue
 
     elif choice == 3:
-        #chamar funcao de conctar com celular
         cellPhoneConnectionOptions()
         continue
 
     elif choice == 4:
-        #chamar funcao de importar video da memoria do pc ou do celular
         print("\n--- Importar Vídeo ---")
         input_path = input("Digite o caminho completo do vídeo (Exemplo mac:/users/meunome/Downloads/meu_video.mp4): ")
         
@@ -156,9 +189,13 @@ while True:
         continue
 
     elif choice == 5:
+        exportScriptsOptions()
+        continue
+
+    elif choice == 6:
         print('Saindo do sistema...')
         break
 
     else:
-        print('Valor inválido, por favor tente novamente com um valor entre 1 e 4')
+        print('Valor inválido, por favor tente novamente com um valor entre 1 e 6')
         continue

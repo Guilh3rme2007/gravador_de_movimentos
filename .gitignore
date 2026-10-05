@@ -8,6 +8,7 @@ mydatabase.db
 # =========================
 # Ignora a pasta principal criada pelo script e todo o seu conteúdo (vídeos, CSVs, subpastas)
 records/
+activationScripts/
 
 # (Opcional) Se os arquivos temporários de teste descritos no código ainda existirem soltos:
 *_video.mp4
